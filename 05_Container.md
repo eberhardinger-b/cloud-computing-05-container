@@ -243,20 +243,20 @@ Open `http://localhost:8080`. Refresh several times and watch the visit counter 
 Docker's built-in DNS resolves service names to container IPs on custom networks.
 
 ```bash
-# Open a shell inside the running app container
-docker compose exec app sh
+# Test DNS resolution – resolve service name to IP
+docker compose exec app getent hosts redis
 
-# Inside the container, test DNS resolution:
-nslookup redis           # resolves the redis service name to its IP
-ping -c 3 redis          # reachability check
-wget -qO- redis:6379     # raw TCP probe (expect a Redis protocol error, not "connection refused")
-exit
+# Verify TCP reachability to redis:6379
+docker compose exec app python3 -c "import socket; s = socket.socket(); s.connect(('redis', 6379)); print('Redis reachable'); s.close()"
+
+# Probe the Redis protocol (expect protocol error, not connection refused)
+docker compose exec app python3 -c "import socket; s = socket.socket(); s.connect(('redis', 6379)); print(repr(s.recv(100))); s.close()"
 ```
 
-- **Q11:** What IP address did `nslookup redis` resolve to? Now stop and restart the Redis container and re-run `nslookup redis` from the app container:
+- **Q11:** What IP address did `getent hosts redis` show? Now stop and restart the Redis container and re-run `getent hosts redis` from the app container:
   ```bash
   docker compose restart redis
-  docker compose exec app sh -c "nslookup redis"
+  docker compose exec app getent hosts redis
   ```
   Did the IP change? Did the service name still resolve? Why is this the correct approach to container-to-container communication instead of hardcoding IPs?
 
@@ -366,7 +366,7 @@ docker compose -f 05_Container/docker-compose.isolated.yml exec proxy \
 
 # From the proxy container: can it reach redis directly? (should FAIL)
 docker compose -f 05_Container/docker-compose.isolated.yml exec proxy \
-  sh -c "ping -c 2 redis || echo 'Cannot reach redis – isolation working'"
+  sh -c "python3 -c 'import socket; s = socket.socket(); s.connect((\"redis\", 6379))' 2>&1 || echo 'Cannot reach redis – isolation working'"
 ```
 
 - **Q16:** Did the isolation test confirm that `proxy` cannot reach `redis` directly? Paste the output of both commands. Which Docker mechanism enforces this separation – is it a firewall rule, a Linux kernel feature, or something else?
