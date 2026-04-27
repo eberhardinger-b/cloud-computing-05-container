@@ -247,10 +247,7 @@ Docker's built-in DNS resolves service names to container IPs on custom networks
 docker compose exec app getent hosts redis
 
 # Verify TCP reachability to redis:6379
-docker compose exec app python3 -c "import socket; s = socket.socket(); s.connect(('redis', 6379)); print('Redis reachable'); s.close()"
-
-# Probe the Redis protocol (expect protocol error, not connection refused)
-docker compose exec app python3 -c "import socket; s = socket.socket(); s.connect(('redis', 6379)); print(repr(s.recv(100))); s.close()"
+docker compose exec app python3 -c "import socket; s = socket.socket(); s.connect(('redis', 6379)); print('Redis reachable on port 6379'); s.close()"
 ```
 
 - **Q11:** What IP address did `getent hosts redis` show? Now stop and restart the Redis container and re-run `getent hosts redis` from the app container:
