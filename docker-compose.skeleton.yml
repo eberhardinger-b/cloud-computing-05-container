@@ -1,0 +1,57 @@
+# ============================================================
+# docker-compose.skeleton.yml  –  Container Lab (Part C)
+#
+# HOW TO USE:
+#   1. Fill in every # TODO block
+#   2. docker compose -f docker-compose.skeleton.yml up --build
+#   3. Open http://localhost:8080
+# ============================================================
+
+services:
+
+  app:
+    build: ./app
+    # TODO 1 ── Port mapping ───────────────────────────────────
+    # Publish the container's port 5000 on host port 8080.
+    # Format: "host_port:container_port"
+    ports:
+      - "___:5000"
+    environment:
+      # TODO 2 ── Service name for DNS resolution ───────────────
+      # Set REDIS_HOST to the name of the redis service below.
+      # Docker's built-in DNS will resolve this name to the
+      # container's current IP automatically. Never hardcode IPs.
+      REDIS_HOST: ___
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+    # TODO 3 ── Network attachment ────────────────────────────
+    # Attach this service to the custom network defined below.
+    networks:
+      - ___
+
+  redis:
+    image: redis:7-alpine
+    # TODO 4 ── Named volume for persistence ──────────────────
+    # Mount the named volume "redis_data" to /data inside redis.
+    # Without this, all visit counts are lost when the container stops.
+    volumes:
+      - ___:___
+    # TODO 5 ── Network attachment ────────────────────────────
+    # Attach redis to the same custom network as the app.
+    networks:
+      - ___
+
+# TODO 6 ── Named volume declaration ─────────────────────────
+# Declare the named volume used by redis above.
+# Leave the value empty – Docker manages the storage location.
+volumes:
+  redis_data:
+
+# TODO 7 ── Custom network declaration ────────────────────────
+# Declare the custom bridge network used by both services.
+# Using a custom network enables built-in DNS resolution by
+# service name (instead of relying on hardcoded IPs).
+networks:
+  app_net:
+    driver: bridge

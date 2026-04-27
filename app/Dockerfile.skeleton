@@ -1,0 +1,46 @@
+# ============================================================
+# Dockerfile.skeleton  –  Container Lab (Part B)
+# App: Python Flask visit counter
+#
+# HOW TO USE:
+#   1. Fill in every # TODO block below
+#   2. Build: docker build -t visitcounter:v1 .
+#   3. Run:   docker run -p 8080:5000 visitcounter:v1
+#   4. Open:  http://localhost:8080
+# ============================================================
+
+# TODO 1 ── Base image ────────────────────────────────────────
+# Choose an official Python base image. Use python:3.12-slim
+# (slim keeps the image small; alpine can cause compilation issues).
+# Refer to Q6 for why the base image choice matters.
+FROM ___
+
+# TODO 2 ── Working directory ─────────────────────────────────
+# Set the working directory inside the container to /app.
+# All subsequent COPY and RUN instructions will use this path.
+WORKDIR ___
+
+# TODO 3 ── Copy dependencies first ───────────────────────────
+# Copy ONLY requirements.txt to the working directory.
+# Tip: Copy it before copying app.py. Why does order matter here?
+# (Refer to Q7 on layer caching.)
+COPY ___ .
+
+# TODO 4 ── Install dependencies ──────────────────────────────
+# Install the Python packages listed in requirements.txt.
+# Use pip with --no-cache-dir to avoid bloating the image.
+RUN pip install --no-cache-dir -r ___
+
+# TODO 5 ── Copy application code ─────────────────────────────
+# Now copy the application source file(s) into the container.
+COPY ___ .
+
+# TODO 6 ── Expose port ────────────────────────────────────────
+# Document that the application listens on port 5000.
+# This does NOT publish the port to the host – it is documentation only.
+EXPOSE ___
+
+# TODO 7 ── Startup command ────────────────────────────────────
+# Define the command to start the Flask application.
+# Use the exec form (JSON array) for correct signal handling.
+CMD ["python", "___"]
