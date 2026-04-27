@@ -363,7 +363,7 @@ docker compose -f 05_Container/docker-compose.isolated.yml exec proxy \
 
 # From the proxy container: can it reach redis directly? (should FAIL)
 docker compose -f 05_Container/docker-compose.isolated.yml exec proxy \
-  sh -c "python3 -c 'import socket; s = socket.socket(); s.connect((\"redis\", 6379))' 2>&1 || echo 'Cannot reach redis – isolation working'"
+  sh -c "wget -T 2 -qO- redis:6379 2>&1 || echo 'Cannot reach redis – isolation working'"
 ```
 
 - **Q16:** Did the isolation test confirm that `proxy` cannot reach `redis` directly? Paste the output of both commands. Which Docker mechanism enforces this separation – is it a firewall rule, a Linux kernel feature, or something else?
